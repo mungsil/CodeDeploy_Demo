@@ -47,7 +47,7 @@ jobs:
       run: |
         FILENAME="deploy-$(date +%Y%m%d%H%M%S).zip"
         zip -r ./$FILENAME ./build/libs/*.jar ./appspec.yml ./scripts/*
-        aws s3 cp --region ap-northeast-2 ./$FILENAME.zip s3://demo-s3-for-code-deploy
+        aws s3 cp --region ap-northeast-2 ./$FILENAME s3://demo-s3-for-code-deploy
 
   dependency-submission:
 
