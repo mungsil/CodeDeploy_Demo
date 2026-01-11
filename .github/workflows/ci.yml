@@ -30,8 +30,24 @@ jobs:
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
 
+    - name: Test with Gradle
+      run: ./gradlew test
+      
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Integrate files to deploy directory 
+      run: cp ./build/libs/demo-0.0.1-SNAPSHOT.jar ./deploy/
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./deploy s3://demo-s3-for-code-deploy
 
   dependency-submission:
 
