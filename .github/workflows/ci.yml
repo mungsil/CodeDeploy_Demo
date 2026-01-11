@@ -36,11 +36,6 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
-    - name: Integrate files to deploy directory 
-      run: |
-        mkdir deploy
-        cp ./build/libs/demo-0.0.1-SNAPSHOT.jar ./deploy/
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -48,8 +43,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./deploy s3://demo-s3-for-code-deploy
+    - name: Upload Files to S3
+      run: |
+        FILENAME="deploy-$(date +%Y%m%d%H%M%S).zip"
+        zip -r ./$FILENAME ./build/libs/*.jar ./appspec.yml ./scripts/*
+        aws s3 cp --region ap-northeast-2 ./$FILENAME.zip s3://demo-s3-for-code-deploy
 
   dependency-submission:
 
